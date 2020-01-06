@@ -31,7 +31,6 @@ boolean check_line_collision(player p, Platform pf)
 void detect_platform_collisions(scene s)
 {
   
-  dumb change undone
   for(int i=0;i<s.pf.length;i++)
   {
     if(check_line_collision(s.p,s.pf[i]))
