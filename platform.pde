@@ -20,7 +20,7 @@ class Platform {
 
 void draw_platform(Platform p){
   float d = 1.3;
-  for(int i=0; i<5; i++){
+  for(int i=0; i<1; i++){
     stroke(250-i*40,210-i*30,250-i*40);
     line( p.point1.x - p.normal.x*d*i , 
           p.point1.y - p.normal.y*d*i ,

@@ -9,10 +9,10 @@ class scene {
 }
 
 scene s;
-int t1,dt = 0;
+float t1,dt = 0;
 
 void setup() {
-  frameRate = 30;
+  frameRate(30);
   size(700, 500);
   background(0);
   noStroke();  
@@ -29,43 +29,50 @@ void setup() {
   s.pf[1] = new Platform(200,300,355,300);
   s.pf[2] = new Platform(10,70,205,300);
   
-  s.p = new player(230,height/4,16,20);
+  s.p = new player(230,height/2,16,20);
   
 }
 
 
 void draw() {
-    dt = millis()-t1;
-    t1 = millis();
+    clear();
+    
+     
+     
+    dt = 0.001*millis()-t1;
+    t1 = 0.001*millis();
+    if(dt>0.02)
+      dt=0.02;
     //println(dt);
   
   
     check_controller(s.p);
   
     apply_gravity(s.p.physics);
-    apply_friction(s.p.physics); 
+    apply_friction(s.p.physics);    
+   
     
+    resolve_forces(s.p.physics, dt);
     
+    update_position(s.p.geometry,s.p.physics, dt);
     
     detect_platform_collisions(s);
     resolve_collisions(s);
     
-    resolve_forces(s.p.physics, 12);
-    update_position(s.p.geometry,s.p.physics, 12);
-   
-    
      //graphic
-    clear();
-   
-    draw_player(s.p);
+     draw_player(s.p);
     for(int i=0;i<s.pf.length;i++){
        draw_platform(s.pf[i]);
     }
      display_stats();
    
+   
+   
 }
 
 void display_stats(){
+  text("x ="+s.p.geometry.position.x,10,440);
+  text("y ="+s.p.geometry.position.y,10,460);
   text("velocity x ="+s.p.physics.velocity.x,10,480);
   text("velocity y ="+s.p.physics.velocity.y,10,500);
 }

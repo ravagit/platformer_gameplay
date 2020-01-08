@@ -19,8 +19,8 @@ boolean check_line_collision(player p, Platform pf)
   float x2 =  pf.point2.x;
   float y2 =  pf.point2.y;
   
-  float radius = 6;//radius of circle 
- 
+  float radius = p.geometry.size.x;//radius of circle 
+  //display_collision_circle(p.geometry.position,radius);
   //(x0,y0) circle center, (x1,y1) (x2,y2) define the line direction
   float dy = y2-y1;
   float dx = x2-x1;
@@ -52,8 +52,8 @@ void resolve_collisions(scene s)
     boolean from_up,from_down = false;
     from_up = tmp.playery > tmp.platform.get_y(tmp.playerx);
     from_down = !from_up;
-    println("collision detected");
-    apply_normal_force(s.p.physics,tmp.platform);
+    text("colliding",10,400);
+
     stand_on_platform(s.p.geometry, s.p.physics,tmp.platform);
     
   }
@@ -74,6 +74,6 @@ void display_collision_box(PVector corner1,PVector corner2){
 void display_collision_circle(PVector center, float radius){
   stroke(0,255,0);
   noFill();
-  circle(center.x,center.y,radius);
+  circle(center.x,center.y,radius*2);
   noStroke();
 }
