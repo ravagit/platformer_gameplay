@@ -1,9 +1,9 @@
-class collision 
+class Collision 
 {
   float distance, x, y;
   Platform platform;
   Player player;
-  public collision(Player p, Platform pf, float x, float y, float distance)
+  public Collision(Player p, Platform pf, float x, float y, float distance)
   {
     this.player = p;
     this.platform = pf;
@@ -38,13 +38,14 @@ boolean check_line_collision(Player p, Platform pf)
   return abs(distance)<radius && xbounds;
 }
 
+
 void detect_platform_collisions(scene s)
 {
   
   for(int i=0;i<s.pf.length;i++)
   {
     if(check_line_collision(s.p, s.pf[i]))
-      s.collision_list.add(new collision(
+      s.collision_list.add(new Collision(
                                          s.p,
                                          s.pf[i],
                                          s.p.geometry.position.x,
@@ -56,29 +57,39 @@ void detect_platform_collisions(scene s)
  
 }
 
-void resolve_collisions(scene s)
+void resolve_collisions_dynamic(scene s)
 {
-  collision tmp;
   Physics phi;
-  Geometry geo;
-  while(s.collision_list.size()>0)
+  for (Collision collision : s.collision_list)
   {
-    tmp = s.collision_list.get(0);
-    s.collision_list.remove(0);
-    
-    println("collision penetration : "+tmp.distance);
-    phi = tmp.player.physics;
-    phi.forces.add(s.p.physics.normal_force(tmp.platform));
-    phi.cancel_colinear_velocity(tmp.platform);
-    
-    geo = tmp.player.geometry;
-    geo.position.y = tmp.platform.get_y(geo.position.x)-geo.size.y-1;
-    
+    phi = collision.player.physics;
+    phi.forces.add(phi.normal_force(collision.platform));
+    phi.cancel_colinear_velocity(collision.platform);
   }
 }
 
+void resolve_collisions_static(scene s)
+{
+  Geometry geo;
+  Player p;
+  for (Collision collision : s.collision_list)
+  {
+    geo = collision.player.geometry;
+    geo.position.y = collision.platform.get_y(geo.position.x)-geo.size.x+1; 
+    
+    p = collision.player;
+    p.grounding = true;
+  }
+}
+  
 
 
+
+void clear_collisions(scene s)
+{
+   while(s.collision_list.size()>0)
+      s.collision_list.remove(0);
+}
 
 void display_collision_box(PVector corner1,PVector corner2){
   stroke(0,255,0);
@@ -91,7 +102,9 @@ void display_collision_box(PVector corner1,PVector corner2){
   
 }
 
-void display_collision_circle(PVector center, float radius){
+void display_collision_circle(Player p){
+  PVector center = p.geometry.position.copy();
+  float radius = p.geometry.size.x;
   stroke(0,255,0);
   noFill();
   circle(center.x,center.y,radius*2);

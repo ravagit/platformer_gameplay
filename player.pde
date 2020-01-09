@@ -16,6 +16,7 @@ class Player
   Physics physics;
   //state
   String state;
+  boolean grounding = false;
   
   
   public Player(float x,float y,float w,float h){
@@ -30,7 +31,7 @@ class Player
   
   public void jump()
   {
-    physics.forces.add(new PVector(0,-1));
+    physics.forces.add(new PVector(0,-10000));
     //physics.velocity.y = 1;
   }
   
@@ -57,7 +58,7 @@ void check_controller(Player p){
 
 void draw_player(Player p){
   fill(200,0,0);
-  //rectMode(CENTER);
-  //rect(p.geometry.position.x, p.geometry.position.y, p.geometry.size.x, p.geometry.size.y);
-  circle(p.geometry.position.x,p.geometry.position.y,p.geometry.size.x*2);
+  rectMode(CENTER);
+  rect(p.geometry.position.x, p.geometry.position.y, p.geometry.size.x, p.geometry.size.y);
+  //circle(p.geometry.position.x,p.geometry.position.y,p.geometry.size.x*2);
 }
