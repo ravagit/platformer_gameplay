@@ -10,7 +10,7 @@ class Geometry
 }
 
 //////////////////////player//////////////////////////
-class player 
+class Player 
 {
   Geometry geometry;
   Physics physics;
@@ -18,7 +18,7 @@ class player
   String state;
   
   
-  public player(float x,float y,float w,float h){
+  public Player(float x,float y,float w,float h){
     geometry = new Geometry(x,y,w,h);
     physics = new Physics();
   }
@@ -42,7 +42,7 @@ class player
 }
 
 
-void check_controller(player p){ 
+void check_controller(Player p){ 
   if(controller.up)
     p.jump();
   if(controller.down)
@@ -55,7 +55,7 @@ void check_controller(player p){
 
 
 
-void draw_player(player p){
+void draw_player(Player p){
   fill(200,0,0);
   //rectMode(CENTER);
   //rect(p.geometry.position.x, p.geometry.position.y, p.geometry.size.x, p.geometry.size.y);

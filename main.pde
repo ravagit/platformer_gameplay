@@ -1,7 +1,7 @@
 
 ///////////Global Scene/////////////
 class scene {
-  player p;
+  Player p;
   Platform[] pf;
   ArrayList<collision> collision_list = new ArrayList<collision>();;
   public scene()
@@ -29,7 +29,7 @@ void setup() {
   s.pf[1] = new Platform(200,300,355,300);
   s.pf[2] = new Platform(10,70,205,300);
   
-  s.p = new player(230,height/2,16,20);
+  s.p = new Player(230,height/2,16,20);
   
 }
 
@@ -46,21 +46,21 @@ void draw() {
     //println(dt);
   
   
+    
     check_controller(s.p);
   
-    apply_gravity(s.p.physics);
-    apply_friction(s.p.physics);    
-   
-    
-    resolve_forces(s.p.physics, dt);
-    
-    update_position(s.p.geometry,s.p.physics, dt);
+    println("----new step----");
+    s.p.physics.forces.add(s.p.physics.gravity());
+    s.p.physics.forces.add(s.p.physics.fluid_friction());
     
     detect_platform_collisions(s);
     resolve_collisions(s);
     
+    s.p.physics.update_physics(s.p.geometry,dt);
+    s.p.physics.clear_physics();
+    
      //graphic
-     draw_player(s.p);
+    draw_player(s.p);
     for(int i=0;i<s.pf.length;i++){
        draw_platform(s.pf[i]);
     }
