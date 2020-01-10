@@ -18,6 +18,24 @@ class Physics
     );  
   }
   
+  public PVector platform_reaction(Platform pf)
+  {
+    PVector f = new PVector(0,0);
+    PVector n = normal_force(pf);
+    float projection = velocity.dot(pf.orthoV());
+    float sign = -projection/abs(projection);
+    if(abs(projection) < pf.stick_limit_speed){
+      f = pf.orthoV().mult(n.mag()*pf.mu*sign);
+      println("stick");
+    } else {
+     println("over stick");
+    }
+ 
+    
+    
+    return f.add(n);
+  }
+  
   public PVector gravity()
   {
     return new PVector(0,g*mass.y);
@@ -27,11 +45,10 @@ class Physics
   public PVector normal_force(Platform pf)
   {
     PVector sumF = this.sumF();
-    float projection = sumF.dot(pf.normal);
-    PVector normal_force = pf.normal.copy();
-    normal_force.mult(-projection);
-    println("normal : "+projection);
-    return normal_force;
+    PVector normal = pf.normalV();
+    float projection = sumF.dot(normal);
+    normal.mult(-projection);
+    return normal;
   }
   
   public void clear_physics()
@@ -43,14 +60,30 @@ class Physics
   public void update_physics(Geometry geo, float dt)
   {
     acceleration = this.sumF();
+    
+    if(abs(acceleration.x) < 0.5)
+      acceleration.x = 0;
+    if(abs(acceleration.y) < 0.5)
+      acceleration.y = 0;
+      
+    println("bilan forces : fx = "+acceleration.x+" fy = "+ acceleration.y);
     acceleration.x *= 1/mass.x;
     acceleration.y *= 1/mass.y;
     
     velocity.x += acceleration.x*dt;
     velocity.y += acceleration.y*dt;
     
+    println("bilan vitesses : vx = "+velocity.x+" vy = "+ velocity.y);
+    if(abs(velocity.x) < 0.5)
+      velocity.x = 0;
+    if(abs(velocity.y) < 0.5)
+      velocity.y = 0;
+    
+      
+    
     geo.position.x += velocity.x*dt;
     geo.position.y += velocity.y*dt;
+    println("bilan positions : x = "+geo.position.x+" vy = "+ geo.position.y);
   }
   
   public PVector sumF()
@@ -61,11 +94,11 @@ class Physics
     return sumF;
   }
   
-  void cancel_colinear_velocity(Platform pf)
+  void cancel_normal_velocity(Platform pf)
   {
-  float b = velocity.dot(pf.normal);
-  velocity.x -= b*pf.normal.x;
-  velocity.y -= b*pf.normal.y;
+  float b = velocity.dot(pf.normalV());
+  velocity.x -= b*pf.normalV().x;
+  velocity.y -= b*pf.normalV().y;
   }
   
 }

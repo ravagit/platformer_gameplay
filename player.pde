@@ -57,7 +57,7 @@ void check_controller(Player p){
 
 
 void draw_player(Player p){
-  fill(200,0,0);
+  fill(250,130,100);
   rectMode(CENTER);
   rect(p.geometry.position.x, p.geometry.position.y, p.geometry.size.x, p.geometry.size.y);
   //circle(p.geometry.position.x,p.geometry.position.y,p.geometry.size.x*2);

@@ -44,7 +44,7 @@ void detect_platform_collisions(scene s)
   
   for(int i=0;i<s.pf.length;i++)
   {
-    if(check_line_collision(s.p, s.pf[i]))
+    if(check_line_collision(s.p, s.pf[i])){
       s.collision_list.add(new Collision(
                                          s.p,
                                          s.pf[i],
@@ -53,6 +53,8 @@ void detect_platform_collisions(scene s)
                                          -collision_distance(s.p,s.pf[i])
                                          )
                            );
+           println("++collision detected++");
+    }
   }
  
 }
@@ -62,9 +64,13 @@ void resolve_collisions_dynamic(scene s)
   Physics phi;
   for (Collision collision : s.collision_list)
   {
+    println("++resolve dynamic++");
     phi = collision.player.physics;
-    phi.forces.add(phi.normal_force(collision.platform));
-    phi.cancel_colinear_velocity(collision.platform);
+    //phi.forces.add(phi.stick_force(collision.platform));
+    //phi.forces.add(phi.normal_force(collision.platform));
+    phi.forces.add(phi.platform_reaction(collision.platform));
+    phi.cancel_normal_velocity(collision.platform);
+    
   }
 }
 
@@ -74,6 +80,7 @@ void resolve_collisions_static(scene s)
   Player p;
   for (Collision collision : s.collision_list)
   {
+    println("++resolve static++");
     geo = collision.player.geometry;
     geo.position.y = collision.platform.get_y(geo.position.x)-geo.size.x+1; 
     

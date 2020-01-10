@@ -12,7 +12,7 @@ scene s;
 float t1,dt = 0;
 
 void setup() {
-  frameRate(30);
+  frameRate(5);
   size(700, 500);
   background(0);
   noStroke();  
@@ -29,7 +29,7 @@ void setup() {
   s.pf[1] = new Platform(200,300,355,300);
   s.pf[2] = new Platform(10,70,205,300);
   
-  s.p = new Player(230,height/2,16,30);
+  s.p = new Player(180,height/2-30,16,30);
   
 }
 
@@ -42,19 +42,23 @@ void draw() {
     if(dt>0.02)
       dt=0.02;
     //println(dt);
+    s.p.physics.clear_physics(); 
     check_controller(s.p);
     s.p.grounding = false;
     
     s.p.physics.forces.add(s.p.physics.gravity());
     s.p.physics.forces.add(s.p.physics.fluid_friction());
     
-    detect_platform_collisions(s);
+    
     resolve_collisions_dynamic(s);
     
     s.p.physics.update_physics(s.p.geometry,dt);
-    resolve_collisions_static(s);
-    s.p.physics.clear_physics();
     clear_collisions(s);
+    detect_platform_collisions(s);
+    resolve_collisions_static(s);
+    
+    
+    
     
      //graphic
     draw_player(s.p);
