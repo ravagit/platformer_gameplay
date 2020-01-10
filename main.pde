@@ -12,7 +12,7 @@ scene s;
 float t1,dt = 0;
 
 void setup() {
-  frameRate(5);
+  frameRate(30);
   size(700, 500);
   background(0);
   noStroke();  
@@ -44,21 +44,17 @@ void draw() {
     //println(dt);
     s.p.physics.clear_physics(); 
     check_controller(s.p);
-    s.p.grounding = false;
+    respawn(s.p);
+    move_platform(s.pf[0]);
+    s.p.on_ground = false;
     
-    s.p.physics.forces.add(s.p.physics.gravity());
-    s.p.physics.forces.add(s.p.physics.fluid_friction());
+    physics_process(s.p.physics,s.p.geometry,dt, s.collision_list);
+    //log_bilan_force();
     
-    
-    resolve_collisions_dynamic(s);
-    
-    s.p.physics.update_physics(s.p.geometry,dt);
     clear_collisions(s);
     detect_platform_collisions(s);
-    resolve_collisions_static(s);
-    
-    
-    
+    for (Collision collision : s.collision_list)
+      collision.resolve();
     
      //graphic
     draw_player(s.p);
@@ -68,12 +64,4 @@ void draw() {
     //display_collision_circle(s.p);
     display_stats();
 
-}
-
-void display_stats(){
-  text("on ground : "+s.p.grounding,10,420);
-  text("x ="+s.p.geometry.position.x,10,440);
-  text("y ="+s.p.geometry.position.y,10,460);
-  text("velocity x ="+s.p.physics.velocity.x,10,480);
-  text("velocity y ="+s.p.physics.velocity.y,10,500);
 }

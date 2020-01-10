@@ -16,7 +16,7 @@ class Player
   Physics physics;
   //state
   String state;
-  boolean grounding = false;
+  boolean on_ground = false;
   
   
   public Player(float x,float y,float w,float h){
@@ -54,11 +54,30 @@ void check_controller(Player p){
     p.walk(1);
 }
 
-
+void respawn(Player p)
+{
+  if(p.geometry.position.x <0 
+  || p.geometry.position.y <0 
+  || p.geometry.position.x >width 
+  || p.geometry.position.y >height
+  )
+  {
+    p.geometry.position = new PVector(width/2,height/4);
+    p.physics = new Physics();
+  }
+}
 
 void draw_player(Player p){
   fill(250,130,100);
   rectMode(CENTER);
   rect(p.geometry.position.x, p.geometry.position.y, p.geometry.size.x, p.geometry.size.y);
-  //circle(p.geometry.position.x,p.geometry.position.y,p.geometry.size.x*2);
+}
+
+void display_stats(){
+  println("on ground : "+s.p.on_ground);
+  text("on ground : "+s.p.on_ground,10,420);
+  text("x ="+s.p.geometry.position.x,10,440);
+  text("y ="+s.p.geometry.position.y,10,460);
+  text("velocity x ="+s.p.physics.velocity.x,10,480);
+  text("velocity y ="+s.p.physics.velocity.y,10,500);
 }

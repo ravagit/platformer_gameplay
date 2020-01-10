@@ -11,6 +11,16 @@ class Collision
     this.y = y;
     this.distance = distance;
   } 
+  
+  public void resolve()
+  {
+    Geometry geo = player.geometry;
+    //player.physics.forces.add(pf.normal_force(phy.sumF()));
+    player.physics.cancel_normal_velocity(platform);
+    geo.position.y = platform.get_y(geo.position.x)-geo.size.x+1; 
+    player.on_ground = true;
+  }
+  
 }
 
 float collision_distance(Player p, Platform pf)
@@ -53,44 +63,11 @@ void detect_platform_collisions(scene s)
                                          -collision_distance(s.p,s.pf[i])
                                          )
                            );
-           println("++collision detected++");
+           //println("++collision detected++");
     }
   }
  
 }
-
-void resolve_collisions_dynamic(scene s)
-{
-  Physics phi;
-  for (Collision collision : s.collision_list)
-  {
-    println("++resolve dynamic++");
-    phi = collision.player.physics;
-    //phi.forces.add(phi.stick_force(collision.platform));
-    //phi.forces.add(phi.normal_force(collision.platform));
-    phi.forces.add(phi.platform_reaction(collision.platform));
-    phi.cancel_normal_velocity(collision.platform);
-    
-  }
-}
-
-void resolve_collisions_static(scene s)
-{
-  Geometry geo;
-  Player p;
-  for (Collision collision : s.collision_list)
-  {
-    println("++resolve static++");
-    geo = collision.player.geometry;
-    geo.position.y = collision.platform.get_y(geo.position.x)-geo.size.x+1; 
-    
-    p = collision.player;
-    p.grounding = true;
-  }
-}
-  
-
-
 
 void clear_collisions(scene s)
 {

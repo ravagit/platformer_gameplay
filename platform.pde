@@ -3,6 +3,7 @@ class Platform {
   PVector point1,point2,n,k;
   float stick_limit_speed= 10;
   float mu = 5;
+  int phase = 0;
   
   public Platform(float x1,float y1,float x2,float y2){
     point1 = new PVector(x1,y1);
@@ -33,6 +34,14 @@ class Platform {
     float c = (point2.y - point1.y)/(point2.x - point1.x);
     return int(c*(x-point1.x) + point1.y);
   }
+  
+  public PVector normal_force(PVector sumF)
+  {
+    PVector normal = normalV();
+    float projection = sumF.dot(normal);
+    normal.mult(-projection);
+    return normal;
+  }
 }
 
 
@@ -54,4 +63,12 @@ void draw_platform(Platform p){
        );
    
   noStroke();
+}
+
+
+void move_platform(Platform pf)
+{
+  pf.phase = (pf.phase+1)%100;  
+  pf.point1.y = 100*cos(6.20*pf.phase*0.01)+300;
+  pf.point2.y = 100*cos(6.20*pf.phase*0.01)+300;
 }
