@@ -25,7 +25,7 @@ void setup() {
   s = new scene();
 
   s.pf = new Platform[3];
-  s.pf[0] = new Platform(350,300,600,100);
+  s.pf[0] = new Platform(390,300,600,100);
   s.pf[1] = new Platform(200,300,355,300);
   s.pf[2] = new Platform(10,70,205,300);
   
@@ -44,17 +44,18 @@ void draw() {
     //println(dt);
     s.p.physics.clear_physics(); 
     check_controller(s.p);
+    display_stats();
     respawn(s.p);
-    move_platform(s.pf[0]);
     s.p.on_ground = false;
     
     physics_process(s.p.physics,s.p.geometry,dt, s.collision_list);
     //log_bilan_force();
     
+    move_platform(s.pf[0]);
     clear_collisions(s);
     detect_platform_collisions(s);
     for (Collision collision : s.collision_list)
-      collision.resolve();
+      collision_effect_static(collision);
     
      //graphic
     draw_player(s.p);
@@ -62,6 +63,6 @@ void draw() {
        draw_platform(s.pf[i]);
     }
     //display_collision_circle(s.p);
-    display_stats();
+    
 
 }

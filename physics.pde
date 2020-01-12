@@ -1,8 +1,9 @@
 class Physics 
 {
-  float g = 10000;
-  PVector lambda = new PVector(90,1);
-  PVector mass = new PVector(2,3);
+  float g = 50000;
+  PVector lambda = new PVector(90,50);
+  PVector inertia = new PVector(0.7,0.7);
+  PVector mass = new PVector(3,1);
   ArrayList<PVector> forces = new ArrayList<PVector>();
   PVector velocity = new PVector(0,0);
   PVector acceleration = new PVector(0,0);
@@ -13,15 +14,18 @@ class Physics
   
   public PVector fluid_friction()
   {
-    return new PVector(-lambda.x*velocity.x,
+    PVector f = new PVector(-lambda.x*velocity.x,
                      -lambda.y*velocity.y
-    );  
+    ); 
+    println("fluid friction : fx = "+f.x+", fy = "+f.y); 
+    return f;
   }
-  
   
   public PVector gravity()
   {
-    return new PVector(0,g*mass.y);
+    PVector f = new PVector(0,g*mass.y);
+    println("gravity : fx = "+f.x+", fy = "+f.y);
+    return f;
   }
   
   
@@ -42,10 +46,17 @@ class Physics
   void cancel_normal_velocity(Platform pf)
   {
   float b = velocity.dot(pf.normalV());
+  //println("normal velocity :"+b);
   if(b < 0){
     velocity.x -= b*pf.normalV().x;
     velocity.y -= b*pf.normalV().y;
     }
+  }
+  
+  void apply_inertia()
+  {
+    velocity.x *= inertia.x;
+    velocity.y *= inertia.y;
   }
   
 }
@@ -54,23 +65,28 @@ class Physics
 void physics_process(Physics ph, Geometry geo, float dt, ArrayList<Collision> all_collisions)
   {
     ph.forces.add(ph.gravity());
-    ph.forces.add(ph.fluid_friction());
+    //ph.forces.add(ph.fluid_friction());
     
-    //for (Collision collision : all_collisions)
-      //on_platform_collision(ph,collision.platform);
+    for (Collision collision : all_collisions)
+       collision_effect_dynamic(collision);
+       
     
     ph.acceleration = ph.sumF();
        
     ph.acceleration.x *= 1/ph.mass.x;
     ph.acceleration.y *= 1/ph.mass.y;
     //ph.acceleration = quantize2D(ph.acceleration,16);
-    
     ph.velocity.x += ph.acceleration.x*dt;
     ph.velocity.y += ph.acceleration.y*dt;
+    
+    ph.apply_inertia();
+    
+    geo.position.x += ph.velocity.x*dt+0.5*ph.acceleration.x*dt*dt;
+    geo.position.y += ph.velocity.y*dt+0.5*ph.acceleration.y*dt*dt;;
+    
     //ph.velocity = quantize2D(ph.velocity,16);
     
-    geo.position.x += ph.velocity.x*dt;
-    geo.position.y += ph.velocity.y*dt;
+    
     //geo.position = quantize2D(geo.position,16);
   }
 

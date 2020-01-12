@@ -15,7 +15,6 @@ class Collision
   public void resolve()
   {
     Geometry geo = player.geometry;
-    //player.physics.forces.add(pf.normal_force(phy.sumF()));
     player.physics.cancel_normal_velocity(platform);
     geo.position.y = platform.get_y(geo.position.x)-geo.size.x+1; 
     player.on_ground = true;

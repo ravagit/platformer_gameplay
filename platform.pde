@@ -1,7 +1,7 @@
 class Platform {
   //geometry
   PVector point1,point2,n,k;
-  float stick_limit_speed= 10;
+  boolean is_sticky = true;
   float mu = 5;
   int phase = 0;
   
@@ -39,8 +39,26 @@ class Platform {
   {
     PVector normal = normalV();
     float projection = sumF.dot(normal);
-    normal.mult(-projection);
+    if(projection < 0)
+      normal.mult(-projection);
+    else
+      normal.mult(0);
+    println("normal force : fx = "+normal.x+", fy = "+normal.y);
     return normal;
+  }
+  
+  public PVector dry_friction(Physics ph)
+  { 
+    float limit_force = 8000;
+      if(ph.velocity.mag() > 100)
+        limit_force *= 0.5;
+    PVector f = new PVector(0,0);
+    PVector ortho = orthoV();
+    float projection = ph.sumF().dot(ortho);
+      if(abs(projection) < limit_force)
+        f = ortho.mult(-projection);
+    println("dry friction : fx = "+f.x+", fy = "+f.y);
+    return f;
   }
 }
 
@@ -63,6 +81,23 @@ void draw_platform(Platform p){
        );
    
   noStroke();
+}
+
+
+void collision_effect_static(Collision col)
+{
+  
+  Geometry geo = col.player.geometry;
+  col.player.physics.cancel_normal_velocity(col.platform);
+  geo.position.y = col.platform.get_y(geo.position.x)-geo.size.x+1; 
+  col.player.on_ground = true;
+}
+
+void collision_effect_dynamic(Collision col)
+{
+  Physics ph= col.player.physics;
+  ph.forces.add(col.platform.normal_force(ph.sumF()));
+  ph.forces.add(col.platform.dry_friction(ph));
 }
 
 

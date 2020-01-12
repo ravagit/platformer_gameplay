@@ -31,7 +31,13 @@ class Player
   
   public void jump()
   {
-    physics.forces.add(new PVector(0,-10000));
+    if(on_ground)
+    {
+      physics.forces.add(new PVector(0,-80000));
+      physics.velocity.y = 0;
+      on_ground = false;
+    }
+      
     //physics.velocity.y = 1;
   }
   
@@ -45,7 +51,10 @@ class Player
 
 void check_controller(Player p){ 
   if(controller.up)
+    {
     p.jump();
+    controller.up = false;
+    }
   if(controller.down)
     p.crouch();
   if(controller.left)
@@ -57,7 +66,6 @@ void check_controller(Player p){
 void respawn(Player p)
 {
   if(p.geometry.position.x <0 
-  || p.geometry.position.y <0 
   || p.geometry.position.x >width 
   || p.geometry.position.y >height
   )
@@ -74,10 +82,10 @@ void draw_player(Player p){
 }
 
 void display_stats(){
-  println("on ground : "+s.p.on_ground);
+ 
   text("on ground : "+s.p.on_ground,10,420);
-  text("x ="+s.p.geometry.position.x,10,440);
-  text("y ="+s.p.geometry.position.y,10,460);
+  text("a x ="+s.p.physics.acceleration.x,10,440);
+  text("a y ="+s.p.physics.acceleration.y,10,460);
   text("velocity x ="+s.p.physics.velocity.x,10,480);
   text("velocity y ="+s.p.physics.velocity.y,10,500);
 }
