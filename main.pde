@@ -3,6 +3,7 @@
 class scene {
   Player p;
   Platform[] pf;
+  Ladder lad;
   ArrayList<Collision> collision_list = new ArrayList<Collision>();;
   public scene()
   {};
@@ -29,8 +30,8 @@ void setup() {
   s.pf[1] = new Platform(200,300,355,300);
   s.pf[2] = new Platform(10,70,205,300);
   
-  s.p = new Player(180,height/2-30,16,30);
-  
+  s.p = new Player(300,height/2-30,10,20);
+  s.lad = new Ladder(250,300,200);
 }
 
 
@@ -58,10 +59,12 @@ void draw() {
       collision_effect_static(collision);
     
      //graphic
-    draw_player(s.p);
+    
+    draw_ladder(s.lad);
     for(int i=0;i<s.pf.length;i++){
        draw_platform(s.pf[i]);
     }
+    draw_player(s.p);
     //display_collision_circle(s.p);
     
 

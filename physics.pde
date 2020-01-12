@@ -1,9 +1,9 @@
 class Physics 
 {
-  float g = 50000;
-  PVector lambda = new PVector(90,50);
-  PVector inertia = new PVector(0.7,0.7);
-  PVector mass = new PVector(3,1);
+  float g = 1000;
+  PVector lambda = new PVector(100,10);
+  PVector inertia = new PVector(0.5,1);
+  PVector mass = new PVector(5,5);
   ArrayList<PVector> forces = new ArrayList<PVector>();
   PVector velocity = new PVector(0,0);
   PVector acceleration = new PVector(0,0);
@@ -64,25 +64,33 @@ class Physics
 
 void physics_process(Physics ph, Geometry geo, float dt, ArrayList<Collision> all_collisions)
   {
-    ph.forces.add(ph.gravity());
-    //ph.forces.add(ph.fluid_friction());
     
-    for (Collision collision : all_collisions)
+
+    
+    ph.forces.add(ph.gravity());
+    ph.forces.add(ph.fluid_friction());
+    
+    for (Collision collision : all_collisions){
        collision_effect_dynamic(collision);
-       
+    }
     
     ph.acceleration = ph.sumF();
        
     ph.acceleration.x *= 1/ph.mass.x;
     ph.acceleration.y *= 1/ph.mass.y;
     //ph.acceleration = quantize2D(ph.acceleration,16);
+   
+    
     ph.velocity.x += ph.acceleration.x*dt;
     ph.velocity.y += ph.acceleration.y*dt;
     
-    ph.apply_inertia();
-    
     geo.position.x += ph.velocity.x*dt+0.5*ph.acceleration.x*dt*dt;
-    geo.position.y += ph.velocity.y*dt+0.5*ph.acceleration.y*dt*dt;;
+    geo.position.y += ph.velocity.y*dt+0.5*ph.acceleration.y*dt*dt;
+    //geo.position.x += ph.velocity.x*dt;
+    //geo.position.y += ph.velocity.y*dt;
+    
+    
+    ph.apply_inertia();
     
     //ph.velocity = quantize2D(ph.velocity,16);
     

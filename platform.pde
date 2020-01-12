@@ -1,8 +1,8 @@
 class Platform {
   //geometry
   PVector point1,point2,n,k;
-  boolean is_sticky = true;
-  float mu = 5;
+  float stick_force_limit = 8000;
+  float stick_force = 4000;
   int phase = 0;
   
   public Platform(float x1,float y1,float x2,float y2){
@@ -49,14 +49,22 @@ class Platform {
   
   public PVector dry_friction(Physics ph)
   { 
-    float limit_force = 8000;
-      if(ph.velocity.mag() > 100)
-        limit_force *= 0.5;
+    float C = 0;
+    if(ph.velocity.mag() > 1)
+      C = stick_force;
+     else
+      C = stick_force_limit;
+        
+        
     PVector f = new PVector(0,0);
     PVector ortho = orthoV();
+    float direction = ph.velocity.dot(ortho);
+    direction = direction/abs(direction);
     float projection = ph.sumF().dot(ortho);
-      if(abs(projection) < limit_force)
+      
+    if(abs(projection) < C)
         f = ortho.mult(-projection);
+      
     println("dry friction : fx = "+f.x+", fy = "+f.y);
     return f;
   }
@@ -65,9 +73,15 @@ class Platform {
 
 
 void draw_platform(Platform p){
-  float d = 20;//scale for normals display
   stroke(190,90,250);
   line( p.point1.x,p.point1.y,p.point2.x,p.point2.y);
+  noStroke();
+  //draw_normals(p);
+}
+
+void draw_normals(Platform p)
+{
+  float d = 20;//scale for normals display
   stroke(250,250,250);
   line( p.center().x,
         p.center().y, 
@@ -103,7 +117,8 @@ void collision_effect_dynamic(Collision col)
 
 void move_platform(Platform pf)
 {
-  pf.phase = (pf.phase+1)%100;  
-  pf.point1.y = 100*cos(6.20*pf.phase*0.01)+300;
-  pf.point2.y = 100*cos(6.20*pf.phase*0.01)+300;
+  int speed = 200;
+  pf.phase = (pf.phase+1)%speed;  
+  pf.point1.y = 100*cos(6.20*pf.phase/speed)+300;
+  pf.point2.y = 100*cos(6.20*pf.phase/speed)+300;
 }

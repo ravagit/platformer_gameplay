@@ -17,9 +17,11 @@ class Player
   //state
   String state;
   boolean on_ground = false;
+  PVector spawn_point;
   
   
   public Player(float x,float y,float w,float h){
+    spawn_point = new PVector(x,y);
     geometry = new Geometry(x,y,w,h);
     physics = new Physics();
   }
@@ -33,8 +35,8 @@ class Player
   {
     if(on_ground)
     {
-      physics.forces.add(new PVector(0,-80000));
-      physics.velocity.y = 0;
+      physics.forces.add(new PVector(0,-100000));
+      //physics.velocity.y = 0;
       on_ground = false;
     }
       
@@ -44,6 +46,11 @@ class Player
   public void walk(float dir)
   {
     physics.forces.add(new PVector(30000*dir,0));
+  }
+  
+  public void action()
+  {
+    
   }
    
 }
@@ -61,6 +68,8 @@ void check_controller(Player p){
     p.walk(-1);
   if(controller.right)
     p.walk(1);
+  if(controller.a)
+    p.action();
 }
 
 void respawn(Player p)
@@ -70,7 +79,7 @@ void respawn(Player p)
   || p.geometry.position.y >height
   )
   {
-    p.geometry.position = new PVector(width/2,height/4);
+    p.geometry.position = p.spawn_point;
     p.physics = new Physics();
   }
 }

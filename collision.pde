@@ -48,6 +48,10 @@ boolean check_line_collision(Player p, Platform pf)
 }
 
 
+void detect_ladder_collision(scene s)
+{
+}
+
 void detect_platform_collisions(scene s)
 {
   
