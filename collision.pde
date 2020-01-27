@@ -1,26 +1,17 @@
 class Collision 
 {
-  float distance, x, y;
-  Platform platform;
   Player player;
-  public Collision(Player p, Platform pf, float x, float y, float distance)
+  public Collision()
   {
-    this.player = p;
-    this.platform = pf;
-    this.x = x;
-    this.y = y;
-    this.distance = distance;
-  } 
-  
-  public void resolve()
+  }  
+  public void resolve_dynamic()
   {
-    Geometry geo = player.geometry;
-    player.physics.cancel_normal_velocity(platform);
-    geo.position.y = platform.get_y(geo.position.x)-geo.size.x+1; 
-    player.on_ground = true;
   }
-  
+  public void resolve_static()
+  {
+  } 
 }
+
 
 float collision_distance(Player p, Platform pf)
 {
@@ -47,10 +38,34 @@ boolean check_line_collision(Player p, Platform pf)
   return abs(distance)<radius && xbounds;
 }
 
-
-void detect_ladder_collision(scene s)
+boolean check_point_collision(PVector p1, PVector p2, float radius1, float radius2)
 {
+  //display_collision_circle(p2,radius2);
+  float distance = p1.dist(p2);
+  return distance<(radius1+radius2);
 }
+
+
+boolean check_box_collision(Player p, Ladder l)
+{
+    float x1 = p.geometry.position.x-p.geometry.size.x/2;
+    float y1 = p.geometry.position.y-p.geometry.size.y/2;
+    float x2 = p.geometry.position.x+p.geometry.size.x/2;
+    float y2 = p.geometry.position.y+p.geometry.size.y/2;
+    //display_collision_box(new PVector(x1,y1), new PVector(x2,y2));
+    
+    float x3 = l.position.x-l.size.x/2;
+    float y3 = l.position.y-l.size.y;
+    float x4 = l.position.x+l.size.x/2;
+    float y4 = l.position.y;
+    //display_collision_box(new PVector(x3,y3), new PVector(x4,y4));
+    
+    boolean interx = x3<x2 && x1<x4;
+    boolean intery = y3<y2 && y1<y4;
+  
+    return interx && intery;
+}
+
 
 void detect_platform_collisions(scene s)
 {
@@ -58,7 +73,7 @@ void detect_platform_collisions(scene s)
   for(int i=0;i<s.pf.length;i++)
   {
     if(check_line_collision(s.p, s.pf[i])){
-      s.collision_list.add(new Collision(
+      s.collision_list.add(new Platform_Collision(
                                          s.p,
                                          s.pf[i],
                                          s.p.geometry.position.x,
@@ -79,7 +94,7 @@ void clear_collisions(scene s)
 }
 
 void display_collision_box(PVector corner1,PVector corner2){
-  stroke(0,255,0);
+  stroke(255,255,255);
   noFill();
   rectMode(CORNERS);
   rect(corner1.x,corner1.y,corner2.x,corner2.y);
@@ -89,10 +104,8 @@ void display_collision_box(PVector corner1,PVector corner2){
   
 }
 
-void display_collision_circle(Player p){
-  PVector center = p.geometry.position.copy();
-  float radius = p.geometry.size.x;
-  stroke(0,255,0);
+void display_collision_circle(PVector center,float radius){
+  stroke(255,255,255);
   noFill();
   circle(center.x,center.y,radius*2);
   noStroke();

@@ -17,6 +17,7 @@ class Player
   //state
   String state;
   boolean on_ground = false;
+  boolean climbing = false;
   PVector spawn_point;
   
   
@@ -38,6 +39,7 @@ class Player
       physics.forces.add(new PVector(0,-100000));
       //physics.velocity.y = 0;
       on_ground = false;
+      climbing = false; 
     }
       
     //physics.velocity.y = 1;
@@ -50,13 +52,26 @@ class Player
   
   public void action()
   {
-    
+    boolean check_ladder = check_box_collision(this,s.lad);
+    println("check ladder: "+check_ladder);
+    if(check_ladder)
+      s.collision_list.add(new Ladder_Collision(this,s.lad));
+      
+    boolean check_bar = check_point_collision(geometry.position,
+                                                s.bar.get_tip(),
+                                                geometry.size.x,
+                                                10
+                                                );
+    if(check_bar)
+      s.collision_list.add(new Bar_Collision(this,s.bar));
+                                        
   }
+  
    
 }
 
 
-void check_controller(Player p){ 
+void check_controller_dynamic(Player p){ 
   if(controller.up)
     {
     p.jump();
@@ -68,6 +83,9 @@ void check_controller(Player p){
     p.walk(-1);
   if(controller.right)
     p.walk(1);
+}
+
+void check_controller_static(Player p){ 
   if(controller.a)
     p.action();
 }
@@ -80,7 +98,8 @@ void respawn(Player p)
   )
   {
     p.geometry.position = p.spawn_point;
-    p.physics = new Physics();
+    p.physics.velocity = new PVector(0,0);
+    p.physics.acceleration = new PVector(0,0);
   }
 }
 

@@ -1,9 +1,9 @@
 class Physics 
 {
-  float g = 1000;
-  PVector lambda = new PVector(100,10);
+  float g = 10000;
+  PVector lambda = new PVector(50,10);
   PVector inertia = new PVector(0.5,1);
-  PVector mass = new PVector(5,5);
+  PVector mass = new PVector(5,1);
   ArrayList<PVector> forces = new ArrayList<PVector>();
   PVector velocity = new PVector(0,0);
   PVector acceleration = new PVector(0,0);
@@ -17,19 +17,19 @@ class Physics
     PVector f = new PVector(-lambda.x*velocity.x,
                      -lambda.y*velocity.y
     ); 
-    println("fluid friction : fx = "+f.x+", fy = "+f.y); 
+    //println("fluid friction : fx = "+f.x+", fy = "+f.y); 
     return f;
   }
   
   public PVector gravity()
   {
     PVector f = new PVector(0,g*mass.y);
-    println("gravity : fx = "+f.x+", fy = "+f.y);
+    //println("gravity : fx = "+f.x+", fy = "+f.y);
     return f;
   }
   
   
-  public void clear_physics()
+  public void clear_forces()
   {
     while(forces.size()>0)
       forces.remove(0);
@@ -60,43 +60,6 @@ class Physics
   }
   
 }
-
-
-void physics_process(Physics ph, Geometry geo, float dt, ArrayList<Collision> all_collisions)
-  {
-    
-
-    
-    ph.forces.add(ph.gravity());
-    ph.forces.add(ph.fluid_friction());
-    
-    for (Collision collision : all_collisions){
-       collision_effect_dynamic(collision);
-    }
-    
-    ph.acceleration = ph.sumF();
-       
-    ph.acceleration.x *= 1/ph.mass.x;
-    ph.acceleration.y *= 1/ph.mass.y;
-    //ph.acceleration = quantize2D(ph.acceleration,16);
-   
-    
-    ph.velocity.x += ph.acceleration.x*dt;
-    ph.velocity.y += ph.acceleration.y*dt;
-    
-    geo.position.x += ph.velocity.x*dt+0.5*ph.acceleration.x*dt*dt;
-    geo.position.y += ph.velocity.y*dt+0.5*ph.acceleration.y*dt*dt;
-    //geo.position.x += ph.velocity.x*dt;
-    //geo.position.y += ph.velocity.y*dt;
-    
-    
-    ph.apply_inertia();
-    
-    //ph.velocity = quantize2D(ph.velocity,16);
-    
-    
-    //geo.position = quantize2D(geo.position,16);
-  }
 
 
 void log_bilan_force()

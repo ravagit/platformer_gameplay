@@ -43,7 +43,7 @@ class Platform {
       normal.mult(-projection);
     else
       normal.mult(0);
-    println("normal force : fx = "+normal.x+", fy = "+normal.y);
+    //println("normal force : fx = "+normal.x+", fy = "+normal.y);
     return normal;
   }
   
@@ -65,9 +65,33 @@ class Platform {
     if(abs(projection) < C)
         f = ortho.mult(-projection);
       
-    println("dry friction : fx = "+f.x+", fy = "+f.y);
+    //println("dry friction : fx = "+f.x+", fy = "+f.y);
     return f;
   }
+}
+
+class Platform_Collision extends Collision
+{
+  float distance, x, y;
+  Platform platform;
+  Player player;
+  public Platform_Collision(Player p, Platform pf, float x, float y, float distance)
+  {
+    this.player = p;
+    this.platform = pf;
+    this.x = x;
+    this.y = y;
+    this.distance = distance;
+  } 
+  
+  public void resolve_dynamic()
+  {
+    collision_effect_dynamic(this);
+  }
+  public void resolve_static()
+  {
+    collision_effect_static(this);
+  } 
 }
 
 
@@ -98,7 +122,7 @@ void draw_normals(Platform p)
 }
 
 
-void collision_effect_static(Collision col)
+void collision_effect_static(Platform_Collision col)
 {
   
   Geometry geo = col.player.geometry;
@@ -107,7 +131,7 @@ void collision_effect_static(Collision col)
   col.player.on_ground = true;
 }
 
-void collision_effect_dynamic(Collision col)
+void collision_effect_dynamic(Platform_Collision col)
 {
   Physics ph= col.player.physics;
   ph.forces.add(col.platform.normal_force(ph.sumF()));

@@ -10,6 +10,32 @@ class Ladder
   }
 }
 
+class Ladder_Collision extends Collision
+{
+  float distance, x, y;
+  Ladder lad;
+  Player player;
+  public Ladder_Collision(Player p, Ladder lad)
+  {
+    this.player = p;
+    this.lad = lad;
+    
+  } 
+  
+  public void resolve_dynamic()
+  {
+     PVector grav = player.physics.gravity();
+     player.physics.forces.add(grav.mult(-1));
+  }
+  public void resolve_static()
+  {
+     println("resolving static ladder collision");
+     player.geometry.position.x = lad.position.x;
+     player.physics = new Physics();
+     player.climbing = true;
+     player.on_ground = false;
+  } 
+}
 
 
 void draw_ladder(Ladder lad)
